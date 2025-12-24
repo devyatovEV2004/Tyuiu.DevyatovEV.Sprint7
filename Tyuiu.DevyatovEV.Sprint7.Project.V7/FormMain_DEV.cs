@@ -1,8 +1,8 @@
 namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
 {
-    public partial class Form1 : Form
+    public partial class FormAbout_DEV : Form
     {
-        public Form1()
+        public FormAbout_DEV()
         {
             InitializeComponent();
         }

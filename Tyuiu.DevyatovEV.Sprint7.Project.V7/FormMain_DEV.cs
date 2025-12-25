@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,12 +16,19 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
         private DataView view_DEV;
 
         private const string CsvPath = @"C:\Users\Egor\source\repos\Tyuiu.DevyatovEV.Sprint7\Data\HousingManagement.csv";
-        private const string ManualPath = @"C:\Users\Egor\source\repos\Tyuiu.DevyatovEV.Sprint7\Data\Руководство_пользователя.txt";
+
+        // Кнопки (добавлены как поля класса)
+        private Button Add_DEV;
+        private Button Delete_DEV;
+        private Button Graph_DEV;
+        private Button About_DEV;
+        private Button Guide_DEV;
 
         public FormMain_DEV()
         {
             InitializeComponent();
             LoadData_DEV();
+            ConfigureDataGridViewForEditing();
         }
 
         private void LoadData_DEV()
@@ -55,40 +61,159 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
             }
         }
 
-        private void MenuManual_DEV_Click(object sender, EventArgs e)
+        private void ConfigureDataGridViewForEditing()
         {
-            if (!File.Exists(ManualPath))
+            // КРИТИЧЕСКИ ВАЖНО: Настройка DataGridView для редактирования
+            dataGridViewBase_DEV.ReadOnly = false;
+            dataGridViewBase_DEV.AllowUserToAddRows = false;
+            dataGridViewBase_DEV.AllowUserToDeleteRows = true;
+            dataGridViewBase_DEV.EditMode = DataGridViewEditMode.EditOnEnter;
+
+            // Разрешаем редактирование всех ячеек
+            foreach (DataGridViewColumn column in dataGridViewBase_DEV.Columns)
             {
-                MessageBox.Show("Файл руководства не найден",
-                    "Ошибка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return;
+                column.ReadOnly = false;
             }
 
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = ManualPath,
-                UseShellExecute = true
-            });
+            // Подписываемся на событие окончания редактирования
+            dataGridViewBase_DEV.CellEndEdit += DataGridViewBase_DEV_CellEndEdit;
         }
 
-        private void MenuChart_DEV_Click(object sender, EventArgs e)
+        private void SetColumnHeaders_DEV()
         {
-            new FormChart_DEV(table_DEV).ShowDialog();
+            if (dataGridViewBase_DEV.Columns.Contains("EntranceNumber"))
+                dataGridViewBase_DEV.Columns["EntranceNumber"].HeaderText = "Подъезд";
+            if (dataGridViewBase_DEV.Columns.Contains("ApartmentNumber"))
+                dataGridViewBase_DEV.Columns["ApartmentNumber"].HeaderText = "Квартира";
+            if (dataGridViewBase_DEV.Columns.Contains("TotalArea"))
+                dataGridViewBase_DEV.Columns["TotalArea"].HeaderText = "Общая площадь";
+            if (dataGridViewBase_DEV.Columns.Contains("LivingArea"))
+                dataGridViewBase_DEV.Columns["LivingArea"].HeaderText = "Жилая площадь";
+            if (dataGridViewBase_DEV.Columns.Contains("RoomsCount"))
+                dataGridViewBase_DEV.Columns["RoomsCount"].HeaderText = "Комнаты";
+            if (dataGridViewBase_DEV.Columns.Contains("TenantLastName"))
+                dataGridViewBase_DEV.Columns["TenantLastName"].HeaderText = "Фамилия";
+            if (dataGridViewBase_DEV.Columns.Contains("RegistrationDate"))
+                dataGridViewBase_DEV.Columns["RegistrationDate"].HeaderText = "Дата";
+            if (dataGridViewBase_DEV.Columns.Contains("FamilyMembers"))
+                dataGridViewBase_DEV.Columns["FamilyMembers"].HeaderText = "Семья";
+            if (dataGridViewBase_DEV.Columns.Contains("ChildrenCount"))
+                dataGridViewBase_DEV.Columns["ChildrenCount"].HeaderText = "Дети";
+            if (dataGridViewBase_DEV.Columns.Contains("HasDebt"))
+                dataGridViewBase_DEV.Columns["HasDebt"].HeaderText = "Долг";
+            if (dataGridViewBase_DEV.Columns.Contains("Note"))
+                dataGridViewBase_DEV.Columns["Note"].HeaderText = "Примечание";
         }
 
         private FilterState_DEV filterState_DEV = new FilterState_DEV();
 
-        private void MenuFilter_DEV_Click(object sender, EventArgs e)
-        {
-            var form = new FormFilter_DEV(filterState_DEV);
+        // ===== РЕАЛИТИМ-ТАЙМ РЕДАКТИРОВАНИЕ =====
 
-            if (form.ShowDialog() == DialogResult.OK)
+        private void DataGridViewBase_DEV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
             {
-                view_DEV.RowFilter = form.ResultFilter;
+                try
+                {
+                    // Получаем измененную ячейку
+                    var cell = dataGridViewBase_DEV.Rows[e.RowIndex].Cells[e.ColumnIndex];
+
+                    // Получаем соответствующую строку в DataTable
+                    DataRowView rowView = (DataRowView)dataGridViewBase_DEV.Rows[e.RowIndex].DataBoundItem;
+                    DataRow row = rowView.Row;
+
+                    // Обновляем значение в DataTable
+                    string columnName = dataGridViewBase_DEV.Columns[e.ColumnIndex].DataPropertyName;
+                    row[columnName] = cell.Value ?? DBNull.Value;
+
+                    // Сохраняем изменения в файл
+                    dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
+
+                    // Показываем сообщение об успешном сохранении (опционально)
+                    // MessageBox.Show("Изменения сохранены!", "Успех", 
+                    //     MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
+
+        // ===== ОБРАБОТЧИКИ ДЛЯ КНОПОК =====
+
+        // Кнопка Добавить (Add_DEV)
+        private void buttonAdd_DEV_Click(object sender, EventArgs e)
+        {
+            var form = new FormEdit_DEV(table_DEV);
+            if (form.ShowDialog() == DialogResult.OK)
+            {
+                table_DEV.Rows.Add(form.RowResult);
+                // ИСПОЛЬЗУЕМ ЭКЗЕМПЛЯР dataService_DEV ДЛЯ СОХРАНЕНИЯ
+                dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
+
+                // Обновляем DataView
+                view_DEV = new DataView(table_DEV);
+                dataGridViewBase_DEV.DataSource = view_DEV;
+                ConfigureDataGridViewForEditing();
+
+                MessageBox.Show("Запись успешно добавлена!", "Успех",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        // Кнопка Удалить (Delete_DEV)
+        private void buttonDelete_DEV_Click(object sender, EventArgs e)
+        {
+            if (dataGridViewBase_DEV.CurrentRow == null)
+            {
+                MessageBox.Show("Выберите запись для удаления", "Информация",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            DataRow row =
+                ((DataRowView)dataGridViewBase_DEV.CurrentRow.DataBoundItem).Row;
+
+            if (MessageBox.Show("Удалить выбранную запись?",
+                "Подтверждение удаления",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning) == DialogResult.Yes)
+            {
+                table_DEV.Rows.Remove(row);
+                // ИСПОЛЬЗУЕМ ЭКЗЕМПЛЯР dataService_DEV ДЛЯ СОХРАНЕНИЯ
+                dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
+
+                // Обновляем DataView
+                view_DEV = new DataView(table_DEV);
+                dataGridViewBase_DEV.DataSource = view_DEV;
+                ConfigureDataGridViewForEditing();
+
+                MessageBox.Show("Запись успешно удалена!", "Успех",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        // Кнопка График (Graph_DEV) - замена MenuChart_DEV
+        private void buttonGraph_DEV_Click(object sender, EventArgs e)
+        {
+            new FormChart_DEV(table_DEV).ShowDialog();
+        }
+
+        // Кнопка Руководство (Guide_DEV) - замена MenuManual_DEV
+        private void buttonGuide_DEV_Click(object sender, EventArgs e)
+        {
+            new FormHelp_DEV().ShowDialog();
+        }
+
+        // Кнопка О программе (About_DEV) - замена MenuAbout_DEV
+        private void buttonAbout_DEV_Click(object sender, EventArgs e)
+        {
+            new FormAbout_DEV().ShowDialog();
+        }
+
+        // ===== СУЩЕСТВУЮЩИЕ ОБРАБОТЧИКИ =====
 
         private void TextSearch_DEV_TextChanged(object sender, EventArgs e)
         {
@@ -204,16 +329,13 @@ $@"СТАТИСТИКА ПО ТЕКУЩЕЙ ТАБЛИЦЕ
                 MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private void MenuAdd_DEV_Click(object sender, EventArgs e)
+        private void MenuFilter_DEV_Click(object sender, EventArgs e)
         {
-            var form = new FormEdit_DEV(table_DEV);
+            var form = new FormFilter_DEV(filterState_DEV);
+
             if (form.ShowDialog() == DialogResult.OK)
             {
-                table_DEV.Rows.Add(form.RowResult);
-                // ИСПОЛЬЗУЕМ ЭКЗЕМПЛЯР dataService_DEV ДЛЯ СОХРАНЕНИЯ
-                dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
-                MessageBox.Show("Запись успешно добавлена!", "Успех",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                view_DEV.RowFilter = form.ResultFilter;
             }
         }
 
@@ -234,29 +356,70 @@ $@"СТАТИСТИКА ПО ТЕКУЩЕЙ ТАБЛИЦЕ
             }
         }
 
-        private void MenuDelete_DEV_Click(object sender, EventArgs e)
+        private void MenuExit_DEV_Click(object sender, EventArgs e) => Close();
+
+        // ===== ФУНКЦИОНАЛ ЗАГРУЗКИ ИЗ ФАЙЛА =====
+
+        private void buttonLoadData_DEV_Click(object sender, EventArgs e)
         {
-            if (dataGridViewBase_DEV.CurrentRow == null) return;
-
-            DataRow row =
-                ((DataRowView)dataGridViewBase_DEV.CurrentRow.DataBoundItem).Row;
-
-            if (MessageBox.Show("Удалить запись?",
-                "Подтверждение",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning) == DialogResult.Yes)
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                table_DEV.Rows.Remove(row);
-                // ИСПОЛЬЗУЕМ ЭКЗЕМПЛЯР dataService_DEV ДЛЯ СОХРАНЕНИЯ
-                dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
-                MessageBox.Show("Запись успешно удалена!", "Успех",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                openFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
+                openFileDialog.Title = "Выберите файл данных";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        string openFilePath = openFileDialog.FileName;
+
+                        // Загружаем данные из выбранного файла
+                        DataTable newTable = dataService_DEV.LoadFromCsv_DEV(openFilePath);
+
+                        // Обновляем текущую таблицу
+                        table_DEV.Clear();
+                        foreach (DataRow row in newTable.Rows)
+                        {
+                            table_DEV.ImportRow(row);
+                        }
+
+                        // Обновляем DataView
+                        view_DEV = new DataView(table_DEV);
+                        dataGridViewBase_DEV.DataSource = view_DEV;
+
+                        // Настраиваем заголовки
+                        SetColumnHeaders_DEV();
+                        ConfigureDataGridViewForEditing();
+
+                        // Сохраняем в основной файл
+                        dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
+
+                        MessageBox.Show($"Данные успешно загружены из файла!\n{openFilePath}", "Успех",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
 
-        private void MenuExit_DEV_Click(object sender, EventArgs e) => Close();
+        // НЕИЗМЕНЕННЫЕ МЕТОДЫ
+        private void panelSearch_DEV_Paint(object sender, PaintEventArgs e) { }
 
-        private void MenuAbout_DEV_Click(object sender, EventArgs e)
-            => new FormAbout_DEV().ShowDialog();
+        // Старые обработчики
+        private void button1_Click(object sender, EventArgs e)
+        {
+            buttonAdd_DEV_Click(sender, e);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            buttonDelete_DEV_Click(sender, e);
+        }
+
+        private void labelSearch_DEV_Click(object sender, EventArgs e) { }
     }
 }

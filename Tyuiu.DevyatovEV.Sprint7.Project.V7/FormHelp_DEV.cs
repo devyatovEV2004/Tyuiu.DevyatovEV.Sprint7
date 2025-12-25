@@ -16,5 +16,10 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
         {
             InitializeComponent();
         }
+
+        private void FormHelp_DEV_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

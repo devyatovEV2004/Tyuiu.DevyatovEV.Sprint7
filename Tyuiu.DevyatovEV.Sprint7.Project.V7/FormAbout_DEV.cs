@@ -32,5 +32,20 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
         {
 
         }
+
+        private void FormAbout_DEV_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelVersion_DEV_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void labelCourse_DEV_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

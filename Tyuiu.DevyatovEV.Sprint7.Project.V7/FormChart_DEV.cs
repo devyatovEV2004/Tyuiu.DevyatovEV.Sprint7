@@ -213,5 +213,10 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
                 if (startY > ClientSize.Height - 100) break;
             }
         }
+
+        private void FormChart_DEV_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

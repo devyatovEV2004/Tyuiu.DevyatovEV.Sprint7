@@ -11,7 +11,6 @@
         private Label labelDeveloper_DEV;
         private Label labelGroup_DEV;
         private Label labelCourse_DEV;
-        private LinkLabel linkLabelGitHub_DEV;
         private Button buttonClose_DEV;
         private Panel panelHeader_DEV;
         private Panel panelFooter_DEV;
@@ -26,6 +25,7 @@
 
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormAbout_DEV));
             pictureBoxLogo_DEV = new PictureBox();
             labelTitle_DEV = new Label();
             labelInfo_DEV = new Label();
@@ -33,7 +33,6 @@
             labelDeveloper_DEV = new Label();
             labelGroup_DEV = new Label();
             labelCourse_DEV = new Label();
-            linkLabelGitHub_DEV = new LinkLabel();
             buttonClose_DEV = new Button();
             panelHeader_DEV = new Panel();
             panelFooter_DEV = new Panel();
@@ -44,6 +43,7 @@
             // 
             // pictureBoxLogo_DEV
             // 
+            pictureBoxLogo_DEV.Image = (Image)resources.GetObject("pictureBoxLogo_DEV.Image");
             pictureBoxLogo_DEV.Location = new Point(30, 30);
             pictureBoxLogo_DEV.Name = "pictureBoxLogo_DEV";
             pictureBoxLogo_DEV.Size = new Size(150, 150);
@@ -83,6 +83,7 @@
             labelVersion_DEV.Size = new Size(93, 15);
             labelVersion_DEV.TabIndex = 3;
             labelVersion_DEV.Text = "Версия: 1.0.0.0";
+            labelVersion_DEV.Click += labelVersion_DEV_Click;
             // 
             // labelDeveloper_DEV
             // 
@@ -102,9 +103,9 @@
             labelGroup_DEV.ForeColor = Color.FromArgb(64, 64, 64);
             labelGroup_DEV.Location = new Point(30, 270);
             labelGroup_DEV.Name = "labelGroup_DEV";
-            labelGroup_DEV.Size = new Size(137, 19);
+            labelGroup_DEV.Size = new Size(135, 19);
             labelGroup_DEV.TabIndex = 5;
-            labelGroup_DEV.Text = "Группа: ИстНб-25-1";
+            labelGroup_DEV.Text = "Группа: Истнб-25-1";
             // 
             // labelCourse_DEV
             // 
@@ -115,19 +116,8 @@
             labelCourse_DEV.Name = "labelCourse_DEV";
             labelCourse_DEV.Size = new Size(177, 19);
             labelCourse_DEV.TabIndex = 6;
-            labelCourse_DEV.Text = "Курс: 2 (Спринт 7, Проект)";
-            // 
-            // linkLabelGitHub_DEV
-            // 
-            linkLabelGitHub_DEV.AutoSize = true;
-            linkLabelGitHub_DEV.Font = new Font("Segoe UI", 10F);
-            linkLabelGitHub_DEV.Location = new Point(30, 330);
-            linkLabelGitHub_DEV.Name = "linkLabelGitHub_DEV";
-            linkLabelGitHub_DEV.Size = new Size(226, 19);
-            linkLabelGitHub_DEV.TabIndex = 7;
-            linkLabelGitHub_DEV.TabStop = true;
-            linkLabelGitHub_DEV.Text = "GitHub проекта (ссылка-заглушка)";
-            linkLabelGitHub_DEV.LinkClicked += linkLabelGitHub_DEV_LinkClicked;
+            labelCourse_DEV.Text = "Курс: 1 (Спринт 7, Проект)";
+            labelCourse_DEV.Click += labelCourse_DEV_Click;
             // 
             // buttonClose_DEV
             // 
@@ -136,7 +126,7 @@
             buttonClose_DEV.FlatStyle = FlatStyle.Flat;
             buttonClose_DEV.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
             buttonClose_DEV.ForeColor = Color.White;
-            buttonClose_DEV.Location = new Point(430, 170);
+            buttonClose_DEV.Location = new Point(551, 321);
             buttonClose_DEV.Name = "buttonClose_DEV";
             buttonClose_DEV.Size = new Size(150, 40);
             buttonClose_DEV.TabIndex = 8;
@@ -153,7 +143,7 @@
             panelHeader_DEV.Dock = DockStyle.Top;
             panelHeader_DEV.Location = new Point(0, 0);
             panelHeader_DEV.Name = "panelHeader_DEV";
-            panelHeader_DEV.Size = new Size(600, 200);
+            panelHeader_DEV.Size = new Size(721, 200);
             panelHeader_DEV.TabIndex = 9;
             // 
             // panelFooter_DEV
@@ -163,25 +153,27 @@
             panelFooter_DEV.Controls.Add(labelDeveloper_DEV);
             panelFooter_DEV.Controls.Add(labelGroup_DEV);
             panelFooter_DEV.Controls.Add(labelCourse_DEV);
-            panelFooter_DEV.Controls.Add(linkLabelGitHub_DEV);
             panelFooter_DEV.Controls.Add(buttonClose_DEV);
             panelFooter_DEV.Dock = DockStyle.Fill;
             panelFooter_DEV.Location = new Point(0, 200);
             panelFooter_DEV.Name = "panelFooter_DEV";
-            panelFooter_DEV.Size = new Size(600, 230);
+            panelFooter_DEV.Size = new Size(721, 381);
             panelFooter_DEV.TabIndex = 10;
             // 
             // FormAbout_DEV
             // 
-            ClientSize = new Size(600, 430);
+            AutoSize = true;
+            ClientSize = new Size(721, 581);
             Controls.Add(panelFooter_DEV);
             Controls.Add(panelHeader_DEV);
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
             MinimizeBox = false;
+            MinimumSize = new Size(720, 620);
             Name = "FormAbout_DEV";
             StartPosition = FormStartPosition.CenterParent;
             Text = "О программе - Домоуправление";
+            Load += FormAbout_DEV_Load;
             ((System.ComponentModel.ISupportInitialize)pictureBoxLogo_DEV).EndInit();
             panelHeader_DEV.ResumeLayout(false);
             panelHeader_DEV.PerformLayout();

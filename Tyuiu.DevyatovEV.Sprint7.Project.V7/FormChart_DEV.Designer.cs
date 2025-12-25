@@ -12,25 +12,35 @@
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
-
         private void InitializeComponent()
         {
-            this.SuspendLayout();
+            SuspendLayout();
             // 
-            // FormChart_ATFK
+            // FormChart_DEV
             // 
-            this.AutoScaleMode = AutoScaleMode.Font;
-            this.ClientSize = new Size(700, 500);
-            this.FormBorderStyle = FormBorderStyle.FixedDialog;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.Text = "Гистограмма по количеству комнат";
-            this.DoubleBuffered = true;
-            this.ResumeLayout(false);
-        }
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            AutoSize = true;
+            ClientSize = new Size(900, 700);
+            DoubleBuffered = true;
 
-        #endregion
+            // Для полной свободы изменения размера:
+            FormBorderStyle = FormBorderStyle.Sizable;
+            MaximizeBox = true;
+            MinimizeBox = true;
+
+            // Минимальный размер окна
+            MinimumSize = new Size(600, 400);
+
+            // Максимальный размер окна (необязательно)
+            // MaximumSize = new Size(1200, 900);
+
+            Name = "FormChart_DEV";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "График распределения квартир по количеству комнат";
+            Load += FormChart_DEV_Load;
+            ResumeLayout(false);
+            PerformLayout();
+        }
     }
 }

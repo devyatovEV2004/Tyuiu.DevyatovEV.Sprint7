@@ -28,26 +28,52 @@
         /// </summary>
         private void InitializeComponent()
         {
-            textBox1 = new TextBox();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormHelp_DEV));
+            label1 = new Label();
+            textBoxHelp = new TextBox();
             SuspendLayout();
             // 
-            // textBox1
+            // label1
             // 
-            textBox1.Dock = DockStyle.Fill;
-            textBox1.Location = new Point(0, 0);
-            textBox1.Multiline = true;
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(800, 450);
-            textBox1.TabIndex = 0;
+            label1.AutoSize = true;
+            label1.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
+            label1.Location = new Point(12, 9);
+            label1.Name = "label1";
+            label1.Size = new Size(271, 25);
+            label1.TabIndex = 1;
+            label1.Text = "Руководство пользователя";
+            // 
+            // textBoxHelp
+            // 
+            textBoxHelp.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            textBoxHelp.BackColor = Color.White;
+            textBoxHelp.BorderStyle = BorderStyle.FixedSingle;
+            textBoxHelp.Font = new Font("Segoe UI", 10F);
+            textBoxHelp.ForeColor = Color.Black;
+            textBoxHelp.Location = new Point(12, 50);
+            textBoxHelp.Margin = new Padding(10);
+            textBoxHelp.Multiline = true;
+            textBoxHelp.Name = "textBoxHelp";
+            textBoxHelp.ReadOnly = true;
+            textBoxHelp.ScrollBars = ScrollBars.Vertical;
+            textBoxHelp.Size = new Size(776, 388);
+            textBoxHelp.TabIndex = 2;
             // 
             // FormHelp_DEV
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
             ClientSize = new Size(800, 450);
-            Controls.Add(textBox1);
+            Controls.Add(textBoxHelp);
+            Controls.Add(label1);
+            Icon = (Icon)resources.GetObject("$this.Icon");
+            MaximizeBox = false;
+            MinimizeBox = false;
+            MinimumSize = new Size(600, 400);
             Name = "FormHelp_DEV";
-            Text = "Домоуправление | Девятов Егор Владимирович";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Домоуправление | Руководство пользователя";
             Load += FormHelp_DEV_Load;
             ResumeLayout(false);
             PerformLayout();
@@ -55,6 +81,7 @@
 
         #endregion
 
-        private TextBox textBox1;
+        private Label label1;
+        private TextBox textBoxHelp;
     }
 }

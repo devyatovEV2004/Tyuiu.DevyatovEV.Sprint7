@@ -17,23 +17,11 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
 
         private const string CsvPath = @"C:\Users\Egor\source\repos\Tyuiu.DevyatovEV.Sprint7\Data\HousingManagement.csv";
 
-        // Кнопки (добавлены как поля класса)
-        private Button Add_DEV;
-        private Button Delete_DEV;
-        private Button Graph_DEV;
-        private Button About_DEV;
-        private Button Guide_DEV;
-        private Button Statistics_DEV; // ДОБАВЛЕНО
-        private Button Export_DEV;     // ДОБАВЛЕНО
-
         public FormMain_DEV()
         {
             InitializeComponent();
             LoadData_DEV();
             ConfigureDataGridViewForEditing();
-
-            // Скрываем меню, так как теперь есть кнопки
-            menuStripMain_DEV.Visible = false;
         }
 
         private void LoadData_DEV()
@@ -110,8 +98,6 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
                 dataGridViewBase_DEV.Columns["Note"].HeaderText = "Примечание";
         }
 
-        private FilterState_DEV filterState_DEV = new FilterState_DEV();
-
         // ===== РЕАЛИТИМ-ТАЙМ РЕДАКТИРОВАНИЕ =====
 
         private void DataGridViewBase_DEV_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -133,10 +119,6 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
 
                     // Сохраняем изменения в файл
                     dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
-
-                    // Показываем сообщение об успешном сохранении (опционально)
-                    // MessageBox.Show("Изменения сохранены!", "Успех", 
-                    //     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 catch (Exception ex)
                 {
@@ -200,19 +182,19 @@ namespace Tyuiu.DevyatovEV.Sprint7.Project.V7
             }
         }
 
-        // Кнопка График (Graph_DEV) - замена MenuChart_DEV
+        // Кнопка График (Graph_DEV)
         private void buttonGraph_DEV_Click(object sender, EventArgs e)
         {
             new FormChart_DEV(table_DEV).ShowDialog();
         }
 
-        // Кнопка Руководство (Guide_DEV) - замена MenuManual_DEV
+        // Кнопка Руководство (Guide_DEV)
         private void buttonGuide_DEV_Click(object sender, EventArgs e)
         {
             new FormHelp_DEV().ShowDialog();
         }
 
-        // Кнопка О программе (About_DEV) - замена MenuAbout_DEV
+        // Кнопка О программе (About_DEV)
         private void buttonAbout_DEV_Click(object sender, EventArgs e)
         {
             new FormAbout_DEV().ShowDialog();
@@ -336,48 +318,7 @@ $@"СТАТИСТИКА ПО ТЕКУЩЕЙ ТАБЛИЦЕ
             view_DEV.RowFilter = "";
         }
 
-        // Старые методы меню (перенаправляем на кнопки)
-        private void MenuStatistics_DEV_Click(object sender, EventArgs e)
-        {
-            Statistics_DEV_Click(sender, e);
-        }
-
-        private void MenuExport_DEV_Click(object sender, EventArgs e)
-        {
-            Export_DEV_Click(sender, e);
-        }
-
-        private void MenuFilter_DEV_Click(object sender, EventArgs e)
-        {
-            var form = new FormFilter_DEV(filterState_DEV);
-
-            if (form.ShowDialog() == DialogResult.OK)
-            {
-                view_DEV.RowFilter = form.ResultFilter;
-            }
-        }
-
-        private void MenuEdit_DEV_Click(object sender, EventArgs e)
-        {
-            if (dataGridViewBase_DEV.CurrentRow == null) return;
-
-            DataRow row =
-                ((DataRowView)dataGridViewBase_DEV.CurrentRow.DataBoundItem).Row;
-
-            var form = new FormEdit_DEV(table_DEV, row);
-            if (form.ShowDialog() == DialogResult.OK)
-            {
-                // ИСПОЛЬЗУЕМ ЭКЗЕМПЛЯР dataService_DEV ДЛЯ СОХРАНЕНИЯ
-                dataService_DEV.SaveToCsv_DEV(CsvPath, table_DEV);
-                MessageBox.Show("Запись успешно обновлена!", "Успех",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void MenuExit_DEV_Click(object sender, EventArgs e) => Close();
-
-        // ===== ФУНКЦИОНАЛ ЗАГРУЗКИ ИЗ ФАЙЛА =====
-
+        // ФУНКЦИОНАЛ ЗАГРУЗКИ ИЗ ФАЙЛА
         private void buttonLoadData_DEV_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -424,23 +365,12 @@ $@"СТАТИСТИКА ПО ТЕКУЩЕЙ ТАБЛИЦЕ
             }
         }
 
-        // НЕИЗМЕНЕННЫЕ МЕТОДЫ
+        // НЕИСПОЛЬЗУЕМЫЕ МЕТОДЫ
         private void panelSearch_DEV_Paint(object sender, PaintEventArgs e) { }
-
-        // Старые обработчики
-        private void button1_Click(object sender, EventArgs e)
-        {
-            buttonAdd_DEV_Click(sender, e);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            buttonDelete_DEV_Click(sender, e);
-        }
-
         private void labelSearch_DEV_Click(object sender, EventArgs e) { }
+        private void menuStripMain_DEV_ItemClicked(object sender, ToolStripItemClickedEventArgs e) { }
 
-        private void menuStripMain_DEV_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        private void Add_File_DEV_Click(object sender, EventArgs e)
         {
 
         }
